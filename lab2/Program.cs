@@ -25,14 +25,6 @@ namespace lab2
             Type = type;
         }
     }
-    static class MatchToken
-    {
-        public static IEnumerable<Match> GetMatch(this Regex regex, string inputText)
-        {
-            for (var match = regex.Match(inputText); match.Success; match = match.NextMatch())
-                yield return match;
-        }
-    }
     class Program
     {
         static IEnumerable<Token> GetTokens(string inputText)
@@ -65,14 +57,54 @@ namespace lab2
         }
         static void Main(string[] args)//COMM 123
         {
+            int mode = 2;
             var inputText = File.ReadAllText(@"../../Program.cs");
             var sb = new StringBuilder();
             foreach (var token in GetTokens(inputText))
             {
-                sb.Append(token.Lexeme);
+                switch (mode)
+                {
+                    case 0:
+                        sb.Append(@"/*").Append(token.Type).Append(@"*/").Append(token.Lexeme);
+                        break;
+                    case 1:
+                        sb.Append(token.Lexeme).Append(@" ");
+                        break;
+                    case 2:
+                        sb.Append(token.Lexeme);
+                        break;
+                }
             }
             Console.WriteLine(sb.ToString());
             File.WriteAllText(@"../../../lab2Out/Program.cs", sb.ToString());
+        }
+
+        static void _Main(string[] args)
+        {
+            string text = File.ReadAllText(@"../../InputTextFile.txt");
+            string regex = File.ReadAllText(@"../../RegExpression.txt");
+
+            char newLine = (char)10;
+            var csv = @"Номер	Группа1	Группа2	Группа3	Группа4" + newLine;
+            csv += string.Concat(new Regex(regex).GetMatch(text)
+            .Select((match, i) =>
+            {
+                var sb = new StringBuilder();
+                sb.Append(@"строка ").Append((i + 1).ToString()).Append(@"	")
+                .AppendLine(string.Join(@"	", match.Groups.Cast<Group>().Skip(1)
+                .Select((group) => @"""" + group.ToString().Replace(@"""", @"""""") + @"""")));
+                return sb.ToString();
+            }));
+            Console.WriteLine(csv);
+            File.WriteAllText(@"../../OutputTextFile.csv", csv, Encoding.Unicode);
+        }
+    }
+    static class MatchToken
+    {
+        public static IEnumerable<Match> GetMatch(this Regex regex, string inputText)
+        {
+            for (var match = regex.Match(inputText); match.Success; match = match.NextMatch())
+                yield return match;
         }
     }
 }
