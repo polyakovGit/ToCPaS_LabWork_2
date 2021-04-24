@@ -37,8 +37,12 @@ namespace lab2
                                     (?<WhiteSpace>[\ \t\r\n]+)|
                                     (?<Comment>(\/\/)(.+?)(?=[\n\r]|\*\)))", RegexOptions.IgnorePatternWhitespace);
             var matches = regex.GetMatch(inputText);
+            int indexMatch = 0;
             foreach (var match in matches)
             {
+                if (indexMatch != match.Index)
+                    throw new Exception(@"пропущен токен");
+                indexMatch += match.Length;
                 if (match.Groups[@"Identifier"].Success)
                     yield return new Token(match.Value, TokenType.Identifier);
                 else if (match.Groups[@"Number"].Success)
@@ -54,6 +58,8 @@ namespace lab2
                 else if (match.Groups[@"Comment"].Success)
                     yield return new Token(match.Value, TokenType.Comment);
             }
+            if (indexMatch != inputText.Length)
+                throw new Exception(@"входной текста отличается от результирующего");
         }
         static void Main(string[] args)//COMM 123
         {
