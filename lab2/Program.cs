@@ -1,4 +1,8 @@
-﻿using System;
+﻿//COMM123 
+
+/*text*/ 
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,7 +12,6 @@ using System.Text.RegularExpressions;
 
 namespace lab2
 {
-
     enum TokenType
     {
         Identifier, Number, Operator, String, Punctuation, WhiteSpace, Comment
@@ -35,7 +38,7 @@ namespace lab2
                                     (?<String>\@""(""""|[^""])*"")|
                                     (?<Punctuation>\.|\(|\)|\{|\}|\[|\]|\;|\<|\>|\,|\:)|
                                     (?<WhiteSpace>[\ \t\r\n]+)|
-                                    (?<Comment>(\/\/)(.+?)(?=[\n\r]|\*\)))", RegexOptions.IgnorePatternWhitespace);
+                                    (?<Comment>(//)(.*?)(?=[\n\r])|((/\*)(.*?)(\*/)))", RegexOptions.IgnorePatternWhitespace);
             var matches = regex.GetMatch(inputText);
             int indexMatch = 0;
             foreach (var match in matches)
@@ -63,7 +66,7 @@ namespace lab2
         }
         static void Main(string[] args)//COMM 123
         {
-            int mode = 2;
+            int mode = 0;
             var inputText = File.ReadAllText(@"../../Program.cs");
             var sb = new StringBuilder();
             foreach (var token in GetTokens(inputText))
