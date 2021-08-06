@@ -14,7 +14,12 @@ namespace lab2
 {
     enum TokenType
     {
-        Identifier, Number, Operator, String, Punctuation, WhiteSpace, Comment
+        Identifier, 
+        Number,
+        String,
+        Punctuation, 
+        WhiteSpace,
+        Comment,
     }
 
     class Token
@@ -44,27 +49,41 @@ namespace lab2
             foreach (var match in matches)
             {
                 if (indexMatch != match.Index)
+                {
                     throw new Exception(@"пропущен токен");
-                indexMatch += match.Length;
+                }
+                indexMatch = match.Index+ match.Length;
                 if (match.Groups[@"Identifier"].Success)
+                {
                     yield return new Token(match.Value, TokenType.Identifier);
+                }
                 else if (match.Groups[@"Number"].Success)
+                {
                     yield return new Token(match.Value, TokenType.Number);
-                else if (match.Groups[@"Operator"].Success)
-                    yield return new Token(match.Value, TokenType.Operator);
+                }
                 else if (match.Groups[@"String"].Success)
+                {
                     yield return new Token(match.Value, TokenType.String);
+                }
                 else if (match.Groups[@"Punctuation"].Success)
+                {
                     yield return new Token(match.Value, TokenType.Punctuation);
+                }
                 else if (match.Groups[@"WhiteSpace"].Success)
+                {
                     yield return new Token(match.Value, TokenType.WhiteSpace);
+                }
                 else if (match.Groups[@"Comment"].Success)
+                {
                     yield return new Token(match.Value, TokenType.Comment);
+                }
             }
             if (indexMatch != inputText.Length)
-                throw new Exception(@"входной текста отличается от результирующего");
+            {
+                throw new Exception(@"входной текст отличается от результирующего");
+            }
         }
-        static void Main(string[] args)//COMM 123
+        static void Main(string[] args)
         {
             int mode = 0;
             var inputText = File.ReadAllText(@"../../Program.cs");
@@ -90,23 +109,27 @@ namespace lab2
 
         static void _Main(string[] args)
         {
-            string text = File.ReadAllText(@"../../InputTextFile.txt");
             string regex = File.ReadAllText(@"../../RegExpression.txt");
-
-            char newLine = (char)10;
-            var csv = @"Номер	Группа1	Группа2	Группа3	Группа4" + newLine;
-            csv += string.Concat(new Regex(regex).GetMatch(text)
-            .Select((match, i) =>
+            string text = File.ReadAllText(@"../../InputTextFile.txt");
+            List<string> output = new List<string>();
+            output.Add(EscapeCsvValue(@"Номер") + @";"
+            + EscapeCsvValue(@"Группа 1") + @";"
+            + EscapeCsvValue(@"Группа 2") + @";"
+            + EscapeCsvValue(@"Группа 3") + @";"
+            + EscapeCsvValue(@"Группа 4"));
+            var rx = new Regex(regex);
+            int i = 0;
+            foreach (Match match in rx.Matches(text))
             {
-                var sb = new StringBuilder();
-                sb.Append(@"строка ").Append((i + 1).ToString()).Append(@"	")
-                .AppendLine(string.Join(@"	", match.Groups.Cast<Group>().Skip(1)
-                .Select((group) => @"""" + group.ToString().Replace(@"""", @"""""") + @"""")));
-                return sb.ToString();
-            }));
-            Console.WriteLine(csv);
-            File.WriteAllText(@"../../OutputTextFile.csv", csv, Encoding.Unicode);
+                output.Add(EscapeCsvValue(@"строка ") + ++i + @";" +
+                EscapeCsvValue(match.Groups[1].Value) + @";" +
+                EscapeCsvValue(match.Groups[2].Value) + @";" +
+                EscapeCsvValue(match.Groups[3].Value) + @";" +
+                EscapeCsvValue(match.Groups[4].Value));
+            }
+            File.WriteAllLines(@"..\..\OutputTextFile.csv", output, Encoding.Default);
         }
+        static string EscapeCsvValue(string s) => @"""" + s.Replace(@"""", @"""""") + @"""";
     }
     static class MatchToken
     {
