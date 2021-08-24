@@ -1,6 +1,6 @@
 ﻿//COMM123 
 
-/*text*/ 
+/*text*/
 
 using System;
 using System.Collections.Generic;
@@ -14,10 +14,10 @@ namespace lab2
 {
     enum TokenType
     {
-        Identifier, 
+        Identifier,
         Number,
         String,
-        Punctuation, 
+        Punctuation,
         WhiteSpace,
         Comment,
     }
@@ -52,7 +52,7 @@ namespace lab2
                 {
                     throw new Exception(@"пропущен токен");
                 }
-                indexMatch = match.Index+ match.Length;
+                indexMatch = match.Index + match.Length;
                 if (match.Groups[@"Identifier"].Success)
                 {
                     yield return new Token(match.Value, TokenType.Identifier);
