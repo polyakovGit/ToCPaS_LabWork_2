@@ -1,7 +1,5 @@
-﻿//COMM123 
-
-/*text*/
-
+﻿/*text*/
+//dasdsa
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -43,7 +41,7 @@ namespace lab2
                                     (?<String>\@""(""""|[^""])*"")|
                                     (?<Punctuation>\.|\(|\)|\{|\}|\[|\]|\;|\<|\>|\,|\:)|
                                     (?<WhiteSpace>[\ \t\r\n]+)|
-                                    (?<Comment>(//)(.*?)(?=[\n\r])|((/\*)(.*?)(\*/)))", RegexOptions.IgnorePatternWhitespace);
+                                    (?<Comment>(/\*[\s\S]*?\*/)|(\/\/)(.+?)(?=[\n\r]|\*\)))", RegexOptions.IgnorePatternWhitespace);
             var matches = regex.GetMatch(inputText);
             int indexMatch = 0;
             foreach (var match in matches)
